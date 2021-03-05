@@ -1,0 +1,43 @@
+{
+	"sources" : 
+	[
+		{
+			"file" : "/home/xeniro/fisco-bco/FISCO-BCOS/build/CMakeFiles/gperftools"
+		},
+		{
+			"file" : "/home/xeniro/fisco-bco/FISCO-BCOS/build/CMakeFiles/gperftools.rule"
+		},
+		{
+			"file" : "/home/xeniro/fisco-bco/FISCO-BCOS/build/CMakeFiles/gperftools-complete.rule"
+		},
+		{
+			"file" : "/home/xeniro/fisco-bco/FISCO-BCOS/deps/src/gperftools-stamp/gperftools-install.rule"
+		},
+		{
+			"file" : "/home/xeniro/fisco-bco/FISCO-BCOS/deps/src/gperftools-stamp/gperftools-mkdir.rule"
+		},
+		{
+			"file" : "/home/xeniro/fisco-bco/FISCO-BCOS/deps/src/gperftools-stamp/gperftools-download.rule"
+		},
+		{
+			"file" : "/home/xeniro/fisco-bco/FISCO-BCOS/deps/src/gperftools-stamp/gperftools-update.rule"
+		},
+		{
+			"file" : "/home/xeniro/fisco-bco/FISCO-BCOS/deps/src/gperftools-stamp/gperftools-patch.rule"
+		},
+		{
+			"file" : "/home/xeniro/fisco-bco/FISCO-BCOS/deps/src/gperftools-stamp/gperftools-configure.rule"
+		},
+		{
+			"file" : "/home/xeniro/fisco-bco/FISCO-BCOS/deps/src/gperftools-stamp/gperftools-build.rule"
+		}
+	],
+	"target" : 
+	{
+		"labels" : 
+		[
+			"gperftools"
+		],
+		"name" : "gperftools"
+	}
+}

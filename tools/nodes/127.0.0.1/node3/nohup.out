@@ -1,0 +1,9 @@
+config file path : config.ini
+[2020-12-07 20:01:21] Initializing...
+FISCO-BCOS Version : 2.6.0
+Build Time         : 20200814 08:45:06
+Build Type         : Linux/clang/Release
+Git Branch         : HEAD
+Git Commit Hash    : e4a5ef2ef64d1943fccc4ebc61467a91779fb1c0
+[2020-12-07 20:01:21] The FISCO-BCOS is running...
+[2020-12-07 20:23:40] FISCO-BCOS program exit normally.

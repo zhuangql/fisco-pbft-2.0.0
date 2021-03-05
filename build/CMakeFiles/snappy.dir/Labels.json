@@ -1,0 +1,43 @@
+{
+	"sources" : 
+	[
+		{
+			"file" : "/home/xeniro/fisco-bco/FISCO-BCOS/build/CMakeFiles/snappy"
+		},
+		{
+			"file" : "/home/xeniro/fisco-bco/FISCO-BCOS/build/CMakeFiles/snappy.rule"
+		},
+		{
+			"file" : "/home/xeniro/fisco-bco/FISCO-BCOS/build/CMakeFiles/snappy-complete.rule"
+		},
+		{
+			"file" : "/home/xeniro/fisco-bco/FISCO-BCOS/deps/src/snappy-stamp/snappy-install.rule"
+		},
+		{
+			"file" : "/home/xeniro/fisco-bco/FISCO-BCOS/deps/src/snappy-stamp/snappy-mkdir.rule"
+		},
+		{
+			"file" : "/home/xeniro/fisco-bco/FISCO-BCOS/deps/src/snappy-stamp/snappy-download.rule"
+		},
+		{
+			"file" : "/home/xeniro/fisco-bco/FISCO-BCOS/deps/src/snappy-stamp/snappy-update.rule"
+		},
+		{
+			"file" : "/home/xeniro/fisco-bco/FISCO-BCOS/deps/src/snappy-stamp/snappy-patch.rule"
+		},
+		{
+			"file" : "/home/xeniro/fisco-bco/FISCO-BCOS/deps/src/snappy-stamp/snappy-configure.rule"
+		},
+		{
+			"file" : "/home/xeniro/fisco-bco/FISCO-BCOS/deps/src/snappy-stamp/snappy-build.rule"
+		}
+	],
+	"target" : 
+	{
+		"labels" : 
+		[
+			"snappy"
+		],
+		"name" : "snappy"
+	}
+}

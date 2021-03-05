@@ -1,0 +1,13 @@
+# Target labels
+ libzdb
+# Source files and their labels
+/home/xeniro/fisco-bco/FISCO-BCOS/build/CMakeFiles/libzdb
+/home/xeniro/fisco-bco/FISCO-BCOS/build/CMakeFiles/libzdb.rule
+/home/xeniro/fisco-bco/FISCO-BCOS/build/CMakeFiles/libzdb-complete.rule
+/home/xeniro/fisco-bco/FISCO-BCOS/deps/src/libzdb-stamp/libzdb-install.rule
+/home/xeniro/fisco-bco/FISCO-BCOS/deps/src/libzdb-stamp/libzdb-mkdir.rule
+/home/xeniro/fisco-bco/FISCO-BCOS/deps/src/libzdb-stamp/libzdb-download.rule
+/home/xeniro/fisco-bco/FISCO-BCOS/deps/src/libzdb-stamp/libzdb-update.rule
+/home/xeniro/fisco-bco/FISCO-BCOS/deps/src/libzdb-stamp/libzdb-patch.rule
+/home/xeniro/fisco-bco/FISCO-BCOS/deps/src/libzdb-stamp/libzdb-configure.rule
+/home/xeniro/fisco-bco/FISCO-BCOS/deps/src/libzdb-stamp/libzdb-build.rule

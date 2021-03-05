@@ -1,0 +1,1 @@
+cmd='./configure;--with-mysql=/home/xeniro/fisco-bco/FISCO-BCOS/deps/src/mysqlclient/scripts/mysql_config;--without-sqlite;--without-postgresql;--enable-shared=false;--enable-protected'

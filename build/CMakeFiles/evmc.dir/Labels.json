@@ -1,0 +1,43 @@
+{
+	"sources" : 
+	[
+		{
+			"file" : "/home/xeniro/fisco-bco/FISCO-BCOS/build/CMakeFiles/evmc"
+		},
+		{
+			"file" : "/home/xeniro/fisco-bco/FISCO-BCOS/build/CMakeFiles/evmc.rule"
+		},
+		{
+			"file" : "/home/xeniro/fisco-bco/FISCO-BCOS/build/CMakeFiles/evmc-complete.rule"
+		},
+		{
+			"file" : "/home/xeniro/fisco-bco/FISCO-BCOS/deps/src/evmc-stamp/evmc-install.rule"
+		},
+		{
+			"file" : "/home/xeniro/fisco-bco/FISCO-BCOS/deps/src/evmc-stamp/evmc-mkdir.rule"
+		},
+		{
+			"file" : "/home/xeniro/fisco-bco/FISCO-BCOS/deps/src/evmc-stamp/evmc-download.rule"
+		},
+		{
+			"file" : "/home/xeniro/fisco-bco/FISCO-BCOS/deps/src/evmc-stamp/evmc-update.rule"
+		},
+		{
+			"file" : "/home/xeniro/fisco-bco/FISCO-BCOS/deps/src/evmc-stamp/evmc-patch.rule"
+		},
+		{
+			"file" : "/home/xeniro/fisco-bco/FISCO-BCOS/deps/src/evmc-stamp/evmc-configure.rule"
+		},
+		{
+			"file" : "/home/xeniro/fisco-bco/FISCO-BCOS/deps/src/evmc-stamp/evmc-build.rule"
+		}
+	],
+	"target" : 
+	{
+		"labels" : 
+		[
+			"evmc"
+		],
+		"name" : "evmc"
+	}
+}

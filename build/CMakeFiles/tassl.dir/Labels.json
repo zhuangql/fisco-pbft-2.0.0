@@ -1,0 +1,43 @@
+{
+	"sources" : 
+	[
+		{
+			"file" : "/home/xeniro/fisco-bco/FISCO-BCOS/build/CMakeFiles/tassl"
+		},
+		{
+			"file" : "/home/xeniro/fisco-bco/FISCO-BCOS/build/CMakeFiles/tassl.rule"
+		},
+		{
+			"file" : "/home/xeniro/fisco-bco/FISCO-BCOS/build/CMakeFiles/tassl-complete.rule"
+		},
+		{
+			"file" : "/home/xeniro/fisco-bco/FISCO-BCOS/deps/src/tassl-stamp/tassl-install.rule"
+		},
+		{
+			"file" : "/home/xeniro/fisco-bco/FISCO-BCOS/deps/src/tassl-stamp/tassl-mkdir.rule"
+		},
+		{
+			"file" : "/home/xeniro/fisco-bco/FISCO-BCOS/deps/src/tassl-stamp/tassl-download.rule"
+		},
+		{
+			"file" : "/home/xeniro/fisco-bco/FISCO-BCOS/deps/src/tassl-stamp/tassl-update.rule"
+		},
+		{
+			"file" : "/home/xeniro/fisco-bco/FISCO-BCOS/deps/src/tassl-stamp/tassl-patch.rule"
+		},
+		{
+			"file" : "/home/xeniro/fisco-bco/FISCO-BCOS/deps/src/tassl-stamp/tassl-configure.rule"
+		},
+		{
+			"file" : "/home/xeniro/fisco-bco/FISCO-BCOS/deps/src/tassl-stamp/tassl-build.rule"
+		}
+	],
+	"target" : 
+	{
+		"labels" : 
+		[
+			"tassl"
+		],
+		"name" : "tassl"
+	}
+}

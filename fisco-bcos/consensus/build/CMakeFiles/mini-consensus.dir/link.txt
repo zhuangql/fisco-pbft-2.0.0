@@ -1,0 +1,1 @@
+/usr/bin/c++    -rdynamic CMakeFiles/mini-consensus.dir/consensus_main.o  -o mini-consensus -linitializer 

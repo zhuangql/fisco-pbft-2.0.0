@@ -1,0 +1,44 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/xeniro/fisco-bco/FISCO-BCOS/fisco-bcos/consensus/ParamParse.h
+libdevcore/FixedHash.h
+-
+libethcore/CommonJS.h
+-
+libethcore/Protocol.h
+-
+libnetwork/Host.h
+-
+libp2p/Service.h
+-
+boost/program_options.hpp
+-
+memory
+-
+
+/home/xeniro/fisco-bco/FISCO-BCOS/fisco-bcos/consensus/consensus_main.cpp
+ParamParse.h
+/home/xeniro/fisco-bco/FISCO-BCOS/fisco-bcos/consensus/ParamParse.h
+libconfig/GlobalConfigure.h
+-
+libethcore/Protocol.h
+-
+libinitializer/Initializer.h
+-
+libinitializer/LedgerInitializer.h
+-
+libinitializer/P2PInitializer.h
+-
+libinitializer/SecureInitializer.h
+-
+libledger/LedgerManager.h
+-
+libtxpool/TxPool.h
+-
+

@@ -1,0 +1,2 @@
+/usr/bin/ar qc libsecurity.a  CMakeFiles/security.dir/EncryptedFile.cpp.o CMakeFiles/security.dir/EncryptedLevelDB.cpp.o CMakeFiles/security.dir/KeyCenter.cpp.o
+/usr/bin/ranlib libsecurity.a

@@ -1,0 +1,9 @@
+include/intx/builtins.h
+include/intx/int128.hpp
+include/intx/intx.hpp
+lib/cmake/intx/intxConfig.cmake
+lib/cmake/intx/intxConfigVersion.cmake
+lib/cmake/intx/intxTargets-release.cmake
+lib/cmake/intx/intxTargets.cmake
+lib/libintx.a
+licenses/intx/LICENSE

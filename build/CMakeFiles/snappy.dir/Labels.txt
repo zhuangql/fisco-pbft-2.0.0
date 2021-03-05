@@ -1,0 +1,13 @@
+# Target labels
+ snappy
+# Source files and their labels
+/home/xeniro/fisco-bco/FISCO-BCOS/build/CMakeFiles/snappy
+/home/xeniro/fisco-bco/FISCO-BCOS/build/CMakeFiles/snappy.rule
+/home/xeniro/fisco-bco/FISCO-BCOS/build/CMakeFiles/snappy-complete.rule
+/home/xeniro/fisco-bco/FISCO-BCOS/deps/src/snappy-stamp/snappy-install.rule
+/home/xeniro/fisco-bco/FISCO-BCOS/deps/src/snappy-stamp/snappy-mkdir.rule
+/home/xeniro/fisco-bco/FISCO-BCOS/deps/src/snappy-stamp/snappy-download.rule
+/home/xeniro/fisco-bco/FISCO-BCOS/deps/src/snappy-stamp/snappy-update.rule
+/home/xeniro/fisco-bco/FISCO-BCOS/deps/src/snappy-stamp/snappy-patch.rule
+/home/xeniro/fisco-bco/FISCO-BCOS/deps/src/snappy-stamp/snappy-configure.rule
+/home/xeniro/fisco-bco/FISCO-BCOS/deps/src/snappy-stamp/snappy-build.rule

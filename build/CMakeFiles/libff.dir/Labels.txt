@@ -1,0 +1,13 @@
+# Target labels
+ libff
+# Source files and their labels
+/home/xeniro/fisco-bco/FISCO-BCOS/build/CMakeFiles/libff
+/home/xeniro/fisco-bco/FISCO-BCOS/build/CMakeFiles/libff.rule
+/home/xeniro/fisco-bco/FISCO-BCOS/build/CMakeFiles/libff-complete.rule
+/home/xeniro/fisco-bco/FISCO-BCOS/build/deps/src/libff-stamp/libff-install.rule
+/home/xeniro/fisco-bco/FISCO-BCOS/build/deps/src/libff-stamp/libff-mkdir.rule
+/home/xeniro/fisco-bco/FISCO-BCOS/build/deps/src/libff-stamp/libff-download.rule
+/home/xeniro/fisco-bco/FISCO-BCOS/build/deps/src/libff-stamp/libff-update.rule
+/home/xeniro/fisco-bco/FISCO-BCOS/build/deps/src/libff-stamp/libff-patch.rule
+/home/xeniro/fisco-bco/FISCO-BCOS/build/deps/src/libff-stamp/libff-configure.rule
+/home/xeniro/fisco-bco/FISCO-BCOS/build/deps/src/libff-stamp/libff-build.rule

@@ -1,0 +1,13 @@
+# Target labels
+ tassl
+# Source files and their labels
+/home/xeniro/fisco-bco/FISCO-BCOS/build/CMakeFiles/tassl
+/home/xeniro/fisco-bco/FISCO-BCOS/build/CMakeFiles/tassl.rule
+/home/xeniro/fisco-bco/FISCO-BCOS/build/CMakeFiles/tassl-complete.rule
+/home/xeniro/fisco-bco/FISCO-BCOS/deps/src/tassl-stamp/tassl-install.rule
+/home/xeniro/fisco-bco/FISCO-BCOS/deps/src/tassl-stamp/tassl-mkdir.rule
+/home/xeniro/fisco-bco/FISCO-BCOS/deps/src/tassl-stamp/tassl-download.rule
+/home/xeniro/fisco-bco/FISCO-BCOS/deps/src/tassl-stamp/tassl-update.rule
+/home/xeniro/fisco-bco/FISCO-BCOS/deps/src/tassl-stamp/tassl-patch.rule
+/home/xeniro/fisco-bco/FISCO-BCOS/deps/src/tassl-stamp/tassl-configure.rule
+/home/xeniro/fisco-bco/FISCO-BCOS/deps/src/tassl-stamp/tassl-build.rule

@@ -1,0 +1,13 @@
+# Target labels
+ jsoncpp
+# Source files and their labels
+/home/xeniro/fisco-bco/FISCO-BCOS/build/CMakeFiles/jsoncpp
+/home/xeniro/fisco-bco/FISCO-BCOS/build/CMakeFiles/jsoncpp.rule
+/home/xeniro/fisco-bco/FISCO-BCOS/build/CMakeFiles/jsoncpp-complete.rule
+/home/xeniro/fisco-bco/FISCO-BCOS/deps/src/jsoncpp-stamp/jsoncpp-install.rule
+/home/xeniro/fisco-bco/FISCO-BCOS/deps/src/jsoncpp-stamp/jsoncpp-mkdir.rule
+/home/xeniro/fisco-bco/FISCO-BCOS/deps/src/jsoncpp-stamp/jsoncpp-download.rule
+/home/xeniro/fisco-bco/FISCO-BCOS/deps/src/jsoncpp-stamp/jsoncpp-update.rule
+/home/xeniro/fisco-bco/FISCO-BCOS/deps/src/jsoncpp-stamp/jsoncpp-patch.rule
+/home/xeniro/fisco-bco/FISCO-BCOS/deps/src/jsoncpp-stamp/jsoncpp-configure.rule
+/home/xeniro/fisco-bco/FISCO-BCOS/deps/src/jsoncpp-stamp/jsoncpp-build.rule

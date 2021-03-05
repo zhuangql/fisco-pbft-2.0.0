@@ -1,0 +1,2 @@
+/usr/bin/ar qc librpc.a  CMakeFiles/rpc.dir/JsonHelper.cpp.o CMakeFiles/rpc.dir/Rpc.cpp.o CMakeFiles/rpc.dir/SafeHttpServer.cpp.o CMakeFiles/rpc.dir/StatisticProtocolServer.cpp.o
+/usr/bin/ranlib librpc.a

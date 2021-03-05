@@ -1,0 +1,2 @@
+/usr/bin/ar qc libflowlimit.a  CMakeFiles/flowlimit.dir/RPCQPSLimiter.cpp.o CMakeFiles/flowlimit.dir/RateLimiter.cpp.o
+/usr/bin/ranlib libflowlimit.a

@@ -1,0 +1,3 @@
+repository='external project URL'
+module='https://codeload.github.com/oneapi-src/oneTBB/tar.gz/v2020.1;https://raw.githubusercontent.com/FISCO-BCOS/LargeFiles/master/libs/oneTBB-2020.1.tar.gz'
+tag='SHA256=7c96a150ed22bc3c6628bc3fef9ed475c00887b26d37bca61518d76a56510971'

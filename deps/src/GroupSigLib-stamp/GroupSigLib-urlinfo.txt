@@ -1,0 +1,3 @@
+repository='external project URL'
+module='https://github.com/FISCO-BCOS/group-signature-lib/archive/bbc7429ea36305c297867edb47e8c80af850c7ef.tar.gz'
+tag='SHA256=963b9bcc7cad541dec70c124c22a40671c01872bea897927be99e402e9fb3d0b'

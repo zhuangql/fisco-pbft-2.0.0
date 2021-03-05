@@ -1,0 +1,13 @@
+# Target labels
+ tbb
+# Source files and their labels
+/home/xeniro/fisco-bco/FISCO-BCOS/build/CMakeFiles/tbb
+/home/xeniro/fisco-bco/FISCO-BCOS/build/CMakeFiles/tbb.rule
+/home/xeniro/fisco-bco/FISCO-BCOS/build/CMakeFiles/tbb-complete.rule
+/home/xeniro/fisco-bco/FISCO-BCOS/deps/src/tbb-stamp/tbb-install.rule
+/home/xeniro/fisco-bco/FISCO-BCOS/deps/src/tbb-stamp/tbb-mkdir.rule
+/home/xeniro/fisco-bco/FISCO-BCOS/deps/src/tbb-stamp/tbb-download.rule
+/home/xeniro/fisco-bco/FISCO-BCOS/deps/src/tbb-stamp/tbb-update.rule
+/home/xeniro/fisco-bco/FISCO-BCOS/deps/src/tbb-stamp/tbb-patch.rule
+/home/xeniro/fisco-bco/FISCO-BCOS/deps/src/tbb-stamp/tbb-configure.rule
+/home/xeniro/fisco-bco/FISCO-BCOS/deps/src/tbb-stamp/tbb-build.rule

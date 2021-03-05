@@ -1,0 +1,8 @@
+In file included from /home/xeniro/fisco-bco/FISCO-BCOS/deps/src/evmone/lib/evmone/analysis.cpp:5:0:
+/home/xeniro/fisco-bco/FISCO-BCOS/deps/src/evmone/lib/evmone/analysis.hpp:7:10: fatal error: evmc/evmc.hpp: 没有那个文件或目录
+ #include <evmc/evmc.hpp>
+          ^~~~~~~~~~~~~~~
+compilation terminated.
+make[5]: *** [lib/evmone/CMakeFiles/evmone.dir/analysis.cpp.o] Error 1
+make[4]: *** [lib/evmone/CMakeFiles/evmone.dir/all] Error 2
+make[3]: *** [all] Error 2

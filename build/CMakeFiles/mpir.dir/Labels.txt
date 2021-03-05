@@ -1,0 +1,13 @@
+# Target labels
+ mpir
+# Source files and their labels
+/home/xeniro/fisco-bco/FISCO-BCOS/build/CMakeFiles/mpir
+/home/xeniro/fisco-bco/FISCO-BCOS/build/CMakeFiles/mpir.rule
+/home/xeniro/fisco-bco/FISCO-BCOS/build/CMakeFiles/mpir-complete.rule
+/home/xeniro/fisco-bco/FISCO-BCOS/build/deps/src/mpir-stamp/mpir-install.rule
+/home/xeniro/fisco-bco/FISCO-BCOS/build/deps/src/mpir-stamp/mpir-mkdir.rule
+/home/xeniro/fisco-bco/FISCO-BCOS/build/deps/src/mpir-stamp/mpir-download.rule
+/home/xeniro/fisco-bco/FISCO-BCOS/build/deps/src/mpir-stamp/mpir-update.rule
+/home/xeniro/fisco-bco/FISCO-BCOS/build/deps/src/mpir-stamp/mpir-patch.rule
+/home/xeniro/fisco-bco/FISCO-BCOS/build/deps/src/mpir-stamp/mpir-configure.rule
+/home/xeniro/fisco-bco/FISCO-BCOS/build/deps/src/mpir-stamp/mpir-build.rule

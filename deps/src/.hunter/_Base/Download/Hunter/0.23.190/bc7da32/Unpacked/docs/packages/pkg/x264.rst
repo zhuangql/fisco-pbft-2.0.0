@@ -1,0 +1,18 @@
+.. spelling::
+
+    x264
+
+.. index:: unsorted ; x264
+
+.. _pkg.x264:
+
+x264
+====
+
+- https://www.videolan.org/developers/x264.html
+- `Example <https://github.com/ruslo/hunter/blob/master/examples/x264/CMakeLists.txt>`__
+
+.. literalinclude:: /../examples/x264/CMakeLists.txt
+  :language: cmake
+  :start-after: # DOCUMENTATION_START {
+  :end-before: # DOCUMENTATION_END }

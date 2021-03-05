@@ -1,0 +1,15 @@
+-- Downloading...
+   dst='/home/xeniro/fisco-bco/FISCO-BCOS/deps/src/evmone-579065d3.tar.gz'
+   timeout='none'
+-- Using src='https://github.com/FISCO-BCOS/evmone/archive/579065d38990f032c786ffc11b1796130cb1c38f.tar.gz'
+-- verifying file...
+       file='/home/xeniro/fisco-bco/FISCO-BCOS/deps/src/evmone-579065d3.tar.gz'
+-- Downloading... done
+-- extracting...
+     src='/home/xeniro/fisco-bco/FISCO-BCOS/deps/src/evmone-579065d3.tar.gz'
+     dst='/home/xeniro/fisco-bco/FISCO-BCOS/deps/src/evmone'
+-- extracting... [tar xfz]
+-- extracting... [analysis]
+-- extracting... [rename]
+-- extracting... [clean up]
+-- extracting... done

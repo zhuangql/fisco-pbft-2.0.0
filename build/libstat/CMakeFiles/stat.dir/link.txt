@@ -1,0 +1,2 @@
+/usr/bin/ar qc libstat.a  CMakeFiles/stat.dir/ChannelNetworkStatHandler.cpp.o CMakeFiles/stat.dir/NetworkStatHandler.cpp.o
+/usr/bin/ranlib libstat.a

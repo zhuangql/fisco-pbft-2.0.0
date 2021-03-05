@@ -1,0 +1,3 @@
+/home/xeniro/fisco-bco/FISCO-BCOS/fisco-bcos/consensus/build/CMakeFiles/rebuild_cache.dir
+/home/xeniro/fisco-bco/FISCO-BCOS/fisco-bcos/consensus/build/CMakeFiles/mini-consensus.dir
+/home/xeniro/fisco-bco/FISCO-BCOS/fisco-bcos/consensus/build/CMakeFiles/edit_cache.dir

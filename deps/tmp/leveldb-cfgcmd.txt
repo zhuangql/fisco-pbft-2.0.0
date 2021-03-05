@@ -1,0 +1,1 @@
+cmd='sed;-i;s#-lsnappy##g;build_detect_platform;COMMAND;sed;-i;s#-DSNAPPY##g;build_detect_platform'

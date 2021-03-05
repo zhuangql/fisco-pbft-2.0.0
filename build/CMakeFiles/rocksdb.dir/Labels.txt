@@ -1,0 +1,13 @@
+# Target labels
+ rocksdb
+# Source files and their labels
+/home/xeniro/fisco-bco/FISCO-BCOS/build/CMakeFiles/rocksdb
+/home/xeniro/fisco-bco/FISCO-BCOS/build/CMakeFiles/rocksdb.rule
+/home/xeniro/fisco-bco/FISCO-BCOS/build/CMakeFiles/rocksdb-complete.rule
+/home/xeniro/fisco-bco/FISCO-BCOS/deps/src/rocksdb-stamp/rocksdb-install.rule
+/home/xeniro/fisco-bco/FISCO-BCOS/deps/src/rocksdb-stamp/rocksdb-mkdir.rule
+/home/xeniro/fisco-bco/FISCO-BCOS/deps/src/rocksdb-stamp/rocksdb-download.rule
+/home/xeniro/fisco-bco/FISCO-BCOS/deps/src/rocksdb-stamp/rocksdb-update.rule
+/home/xeniro/fisco-bco/FISCO-BCOS/deps/src/rocksdb-stamp/rocksdb-patch.rule
+/home/xeniro/fisco-bco/FISCO-BCOS/deps/src/rocksdb-stamp/rocksdb-configure.rule
+/home/xeniro/fisco-bco/FISCO-BCOS/deps/src/rocksdb-stamp/rocksdb-build.rule

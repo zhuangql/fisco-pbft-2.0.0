@@ -1,0 +1,2 @@
+/usr/bin/ar qc libeventfilter.a  CMakeFiles/eventfilter.dir/EventLogFilter.cpp.o CMakeFiles/eventfilter.dir/EventLogFilterManager.cpp.o CMakeFiles/eventfilter.dir/EventLogFilterParams.cpp.o
+/usr/bin/ranlib libeventfilter.a

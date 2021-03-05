@@ -1,0 +1,13 @@
+# Target labels
+ evmone
+# Source files and their labels
+/home/xeniro/fisco-bco/FISCO-BCOS/build/CMakeFiles/evmone
+/home/xeniro/fisco-bco/FISCO-BCOS/build/CMakeFiles/evmone.rule
+/home/xeniro/fisco-bco/FISCO-BCOS/build/CMakeFiles/evmone-complete.rule
+/home/xeniro/fisco-bco/FISCO-BCOS/deps/src/evmone-stamp/evmone-install.rule
+/home/xeniro/fisco-bco/FISCO-BCOS/deps/src/evmone-stamp/evmone-mkdir.rule
+/home/xeniro/fisco-bco/FISCO-BCOS/deps/src/evmone-stamp/evmone-download.rule
+/home/xeniro/fisco-bco/FISCO-BCOS/deps/src/evmone-stamp/evmone-update.rule
+/home/xeniro/fisco-bco/FISCO-BCOS/deps/src/evmone-stamp/evmone-patch.rule
+/home/xeniro/fisco-bco/FISCO-BCOS/deps/src/evmone-stamp/evmone-configure.rule
+/home/xeniro/fisco-bco/FISCO-BCOS/deps/src/evmone-stamp/evmone-build.rule

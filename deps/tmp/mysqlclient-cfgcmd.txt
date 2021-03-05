@@ -1,0 +1,1 @@
+cmd='/usr/bin/cmake;-DMYSQL_TCP_PORT=3305;-DCMAKE_INSTALL_PREFIX=/home/xeniro/fisco-bco/FISCO-BCOS/deps/;-GUnix Makefiles;<SOURCE_DIR><SOURCE_SUBDIR>'

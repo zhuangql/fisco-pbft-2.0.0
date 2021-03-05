@@ -1,0 +1,2 @@
+/usr/bin/ar qc libstoragestate.a  CMakeFiles/storagestate.dir/StorageState.cpp.o CMakeFiles/storagestate.dir/StorageStateFactory.cpp.o
+/usr/bin/ranlib libstoragestate.a

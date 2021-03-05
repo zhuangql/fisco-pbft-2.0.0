@@ -1,0 +1,3 @@
+repository='external project URL'
+module='https://github.com/FISCO-BCOS/mpir/archive/47910ac631c599774577b155a33fa3a372155c1d.tar.gz'
+tag='SHA256=f09fab14ce96624ddfb2803f515326b9fbb503010258fd8b74d290ea205b463c'

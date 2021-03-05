@@ -1,0 +1,1 @@
+cmd='./configure;--disable-shared;CXXFLAGS=-DHAVE_POSIX_MEMALIGN_SYMBOL=1;--enable-frame-pointers;--disable-cpu-profiler;--disable-heap-profiler;--disable-heap-checker;--disable-debugalloc;--enable-minimal;--prefix=/home/xeniro/fisco-bco/FISCO-BCOS/deps/src/gperftools'

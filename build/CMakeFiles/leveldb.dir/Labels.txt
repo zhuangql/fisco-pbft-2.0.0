@@ -1,0 +1,13 @@
+# Target labels
+ leveldb
+# Source files and their labels
+/home/xeniro/fisco-bco/FISCO-BCOS/build/CMakeFiles/leveldb
+/home/xeniro/fisco-bco/FISCO-BCOS/build/CMakeFiles/leveldb.rule
+/home/xeniro/fisco-bco/FISCO-BCOS/build/CMakeFiles/leveldb-complete.rule
+/home/xeniro/fisco-bco/FISCO-BCOS/deps/src/leveldb-stamp/leveldb-install.rule
+/home/xeniro/fisco-bco/FISCO-BCOS/deps/src/leveldb-stamp/leveldb-mkdir.rule
+/home/xeniro/fisco-bco/FISCO-BCOS/deps/src/leveldb-stamp/leveldb-download.rule
+/home/xeniro/fisco-bco/FISCO-BCOS/deps/src/leveldb-stamp/leveldb-update.rule
+/home/xeniro/fisco-bco/FISCO-BCOS/deps/src/leveldb-stamp/leveldb-patch.rule
+/home/xeniro/fisco-bco/FISCO-BCOS/deps/src/leveldb-stamp/leveldb-configure.rule
+/home/xeniro/fisco-bco/FISCO-BCOS/deps/src/leveldb-stamp/leveldb-build.rule

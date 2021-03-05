@@ -1,0 +1,4 @@
+[ 20%] Building CXX object lib/evmone/CMakeFiles/evmone.dir/analysis.cpp.o
+lib/evmone/CMakeFiles/evmone.dir/build.make:62: recipe for target 'lib/evmone/CMakeFiles/evmone.dir/analysis.cpp.o' failed
+CMakeFiles/Makefile2:103: recipe for target 'lib/evmone/CMakeFiles/evmone.dir/all' failed
+Makefile:151: recipe for target 'all' failed

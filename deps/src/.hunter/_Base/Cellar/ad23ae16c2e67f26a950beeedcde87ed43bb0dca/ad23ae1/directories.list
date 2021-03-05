@@ -1,0 +1,4 @@
+include/ethash
+lib/cmake/ethash
+lib
+licenses/ethash
