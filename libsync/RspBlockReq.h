@@ -37,8 +37,8 @@ class DownloadRequest
 {
 public:
     DownloadRequest(int64_t _fromNumber, int64_t _size) : fromNumber(_fromNumber), size(_size) {}
-    int64_t fromNumber;
-    int64_t size;
+    int64_t fromNumber;//请求起始区块高度
+    int64_t size;//请求区块数量
 };
 
 struct RequestQueueCmp
@@ -46,7 +46,7 @@ struct RequestQueueCmp
     bool operator()(DownloadRequest const& _a, DownloadRequest const& _b)
     {
         if (_a.fromNumber == _b.fromNumber)
-            return _a.size < _b.size;          // decreasing order by size
+            return _a.size < _b.size;          // decreasing order by size    //什么情况会发生？？？sync
         return _a.fromNumber > _b.fromNumber;  // increasing order by fromNumber
     }
 };
@@ -59,10 +59,14 @@ public:
     DownloadRequest topAndPop();  // Must call use disablePush() before
     bool empty();
 
+    void enablePush() { x_canPush.unlock(); };
+    void disablePush() { x_canPush.lock(); };
+
 private:
     NodeID m_nodeId;
-    mutable SharedMutex x_reqQueue;
     std::priority_queue<DownloadRequest, std::vector<DownloadRequest>, RequestQueueCmp> m_reqQueue;
+    mutable std::mutex x_canPush;  // pop() wait for push(), push() drop when pop()
+    mutable std::mutex x_push;     // To serialize push()
 };
 }  // namespace sync
 }  // namespace dev

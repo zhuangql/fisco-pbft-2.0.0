@@ -29,46 +29,52 @@ using namespace dev::sync;
 
 void DownloadRequestQueue::push(int64_t _fromNumber, int64_t _size)
 {
+    Guard l(x_push);
+    if (!x_canPush.try_lock())
     {
-        ReadGuard l(x_reqQueue);
-        if (m_reqQueue.size() >= c_maxReceivedDownloadRequestPerPeer)
-        {
-            SYNC_LOG(DEBUG) << LOG_BADGE("Download") << LOG_BADGE("Request")
-                            << LOG_DESC("Drop request for reqQueue full")
-                            << LOG_KV("reqQueueSize", m_reqQueue.size())
-                            << LOG_KV("fromNumber", _fromNumber) << LOG_KV("size", _size)
-                            << LOG_KV("nodeId", m_nodeId.abridged());
-
-            return;
-        }
+        SYNC_LOG(DEBUG) << LOG_BADGE("Download") << LOG_BADGE("Request")
+                        << LOG_DESC("Drop request when responding blocks")
+                        << LOG_KV("fromNumber", _fromNumber) << LOG_KV("size", _size)
+                        << LOG_KV("nodeId", m_nodeId.abridged());
+        return;
     }
+
+    if (m_reqQueue.size() >= c_maxReceivedDownloadRequestPerPeer)
     {
-        WriteGuard l(x_reqQueue);
-        m_reqQueue.push(DownloadRequest(_fromNumber, _size));
+        SYNC_LOG(DEBUG) << LOG_BADGE("Download") << LOG_BADGE("Request")
+                        << LOG_DESC("Drop request for reqQueue full")
+                        << LOG_KV("reqQueueSize", m_reqQueue.size())
+                        << LOG_KV("fromNumber", _fromNumber) << LOG_KV("size", _size)
+                        << LOG_KV("nodeId", m_nodeId.abridged());
 
-        SYNC_LOG(TRACE) << LOG_BADGE("Download") << LOG_BADGE("Request")
-                        << LOG_DESC("Push request in reqQueue req") << LOG_KV("from", _fromNumber)
-                        << LOG_KV("to", _fromNumber + _size - 1)
-                        << LOG_KV("peer", m_nodeId.abridged());
+        x_canPush.unlock();
+        return;
     }
+
+    m_reqQueue.push(DownloadRequest(_fromNumber, _size));
+
+    SYNC_LOG(TRACE) << LOG_BADGE("Download") << LOG_BADGE("Request")
+                    << LOG_DESC("Push request in reqQueue req") << LOG_KV("from", _fromNumber)
+                    << LOG_KV("to", _fromNumber + _size - 1) << LOG_KV("peer", m_nodeId.abridged());
+
+    x_canPush.unlock();
 }
 
 DownloadRequest DownloadRequestQueue::topAndPop()
 {
-    WriteGuard l(x_reqQueue);
     if (m_reqQueue.empty())
         return DownloadRequest(0, 0);
 
-    // Merge tops of reqQueue.
+    // Merge tops of reqQueue.   ？？？sync 什么情况下会发生
     // "Tops" means that the merge result of all tops can merge at one turn
     // Example:
     // top[x] (fromNumber, size)    range       merged range    merged tops(fromNumber, size)
-    // top[0] (1, 3)                [1, 4)      [1, 4)          (1, 3)
-    // top[1] (1, 4)                [1, 5)      [1, 5)          (1, 4)
-    // top[2] (2, 1)                [2, 3)      [1, 5)          (1, 4)
-    // top[3] (2, 4)                [2, 6)      [1, 6)          (1, 5)
-    // top[4] (6, 2)                [6, 8)      [1, 8)          (1, 7)
-    // top[5] (10, 2)               [10, 12]    can not merge into (1, 7) leave it for next turn
+    // top[0] (1, 3)                                [1, 4)      [1, 4)          (1, 3)
+    // top[1] (1, 4)                                [1, 5)      [1, 5)          (1, 4)
+    // top[2] (2, 1)                                [2, 3)      [1, 5)          (1, 4)
+    // top[3] (2, 4)                                [2, 6)      [1, 6)          (1, 5)
+    // top[4] (6, 2)                                [6, 8)      [1, 8)          (1, 7)
+    // top[5] (10, 2)                             [10, 12]    can not merge into (1, 7) leave it for next turn
     int64_t fromNumber = m_reqQueue.top().fromNumber;
     int64_t size = 0;
     while (!m_reqQueue.empty() && fromNumber + size >= m_reqQueue.top().fromNumber)
@@ -89,6 +95,5 @@ DownloadRequest DownloadRequestQueue::topAndPop()
 
 bool DownloadRequestQueue::empty()
 {
-    ReadGuard l(x_reqQueue);
     return m_reqQueue.empty();
 }

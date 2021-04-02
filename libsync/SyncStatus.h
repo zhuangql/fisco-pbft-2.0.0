@@ -23,7 +23,6 @@
 #include "Common.h"
 #include "DownloadingBlockQueue.h"
 #include "RspBlockReq.h"
-#include "SyncMsgPacket.h"
 #include <libblockchain/BlockChainInterface.h>
 #include <libdevcore/FixedHash.h>
 #include <libdevcore/Worker.h>
@@ -62,35 +61,34 @@ public:
         latestHash(_latestHash),
         reqQueue(_nodeId)
     {}
-    SyncPeerStatus(SyncStatusPacket::Ptr _info, PROTOCOL_ID)
-      : nodeId(_info->nodeId),
-        number(_info->number),
-        genesisHash(_info->genesisHash),
-        latestHash(_info->latestHash),
-        reqQueue(_info->nodeId)
+    SyncPeerStatus(const SyncPeerInfo& _info, PROTOCOL_ID)
+      : nodeId(_info.nodeId),
+        number(_info.number),
+        genesisHash(_info.genesisHash),
+        latestHash(_info.latestHash),
+        reqQueue(_info.nodeId)
     {}
 
-    void update(SyncStatusPacket::Ptr _info)
+    void update(const SyncPeerInfo& _info)
     {
-        nodeId = _info->nodeId;
-        number = _info->number;
-        genesisHash = _info->genesisHash;
-        latestHash = _info->latestHash;
+        nodeId = _info.nodeId;
+        number = _info.number;
+        genesisHash = _info.genesisHash;
+        latestHash = _info.latestHash;
     }
 
 public:
     NodeID nodeId;
-    int64_t number;
+    int64_t number;//区块高度
     h256 genesisHash;
     h256 latestHash;
-    DownloadRequestQueue reqQueue;
+    DownloadRequestQueue reqQueue;//用nodeId赋值
     bool isSealer = false;
 };
 
 class SyncMasterStatus
 {
 public:
-    using Ptr = std::shared_ptr<SyncMasterStatus>;
     SyncMasterStatus(std::shared_ptr<dev::blockchain::BlockChainInterface> _blockChain,
         PROTOCOL_ID const& _protocolId, h256 const& _genesisHash, NodeID const& _nodeId)
       : genesisHash(_genesisHash),
@@ -112,25 +110,17 @@ public:
 
     bool hasPeer(NodeID const& _id);
 
-    bool newSyncPeerStatus(SyncStatusPacket::Ptr _info);
+    bool newSyncPeerStatus(SyncPeerInfo const& _info);
 
     void deletePeer(NodeID const& _id);
 
-    std::shared_ptr<NodeIDs> peers();
-    std::shared_ptr<std::set<NodeID>> peersSet();
-
-    NodeIDs filterPeers(int64_t const& _neighborSize, std::shared_ptr<NodeIDs> _peers,
-        std::function<bool(std::shared_ptr<SyncPeerStatus>)> const& _allow);
+    NodeIDs peers();
 
     std::shared_ptr<SyncPeerStatus> peerStatus(NodeID const& _id);
 
     void foreachPeer(std::function<bool(std::shared_ptr<SyncPeerStatus>)> const& _f) const;
 
     void foreachPeerRandom(std::function<bool(std::shared_ptr<SyncPeerStatus>)> const& _f) const;
-    // select neighborSize peers
-    // call _f for each selected peers
-    void forRandomPeers(int64_t const& _neighborSize,
-        std::function<bool(std::shared_ptr<SyncPeerStatus>)> const& _f);
 
     /// Select some peers at _percent when _allow(peer)
     NodeIDs randomSelection(
@@ -141,9 +131,6 @@ public:
         size_t _maxChosenSize, std::function<bool(std::shared_ptr<SyncPeerStatus>)> const& _allow);
 
     DownloadingBlockQueue& bq() { return m_downloadingBlockQueue; }
-
-private:
-    int64_t selectPeers(int64_t const& _neighborSize, std::shared_ptr<NodeIDs> _nodeIds);
 
 public:
     h256 genesisHash;
@@ -156,8 +143,8 @@ private:
     PROTOCOL_ID m_protocolId;
     NodeID m_nodeId;
     mutable SharedMutex x_peerStatus;
-    std::map<NodeID, std::shared_ptr<SyncPeerStatus>> m_peersStatus;
-    DownloadingBlockQueue m_downloadingBlockQueue;
+    std::map<NodeID, std::shared_ptr<SyncPeerStatus>> m_peersStatus; //peerStatus的列表
+    DownloadingBlockQueue m_downloadingBlockQueue;//正在下载的区块队列
 };
 
 }  // namespace sync

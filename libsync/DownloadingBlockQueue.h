@@ -42,7 +42,7 @@ public:
     {}
     int64_t fromNumber;
     int64_t size;
-    bytes blocksBytes;
+    bytes blocksBytes;//下载的区块区间
 };
 
 struct BlockQueueCmp
@@ -58,7 +58,7 @@ class DownloadingBlockQueue
 {
 public:
     using ShardPtr = std::shared_ptr<DownloadBlocksShard>;
-    using ShardPtrVec = std::list<ShardPtr>;
+    using ShardPtrVec = std::vector<ShardPtr>;
 
 public:
     DownloadingBlockQueue(std::shared_ptr<dev::blockchain::BlockChainInterface> _blockChain,
@@ -100,36 +100,14 @@ public:
 
     void clearFullQueueIfNotHas(int64_t _blockNumber);
 
-    void setMaxBlockQueueSize(int64_t const& _maxBlockQueueSize)
-    {
-        m_maxBlockQueueSize = _maxBlockQueueSize;
-    }
-
-    int64_t maxRequestBlocks() const { return m_maxRequestBlocks; }
-    void adjustMaxRequestBlocks();
-
-private:
-    bool flushOneShard(ShardPtr _blocksShard);
-
 private:
     std::shared_ptr<dev::blockchain::BlockChainInterface> m_blockChain;
-    NodeID m_nodeId;
-    std::priority_queue<BlockPtr, BlockPtrVec, BlockQueueCmp> m_blocks;  //
-    std::shared_ptr<ShardPtrVec> m_buffer;  // use buffer for faster push return
+    NodeID m_nodeId;//本节点ID
+    std::priority_queue<BlockPtr, BlockPtrVec, BlockQueueCmp> m_blocks;  //下载队列
+    std::shared_ptr<ShardPtrVec> m_buffer;  // use buffer for faster push return下载的 多个 区块区间
 
     mutable SharedMutex x_blocks;
     mutable SharedMutex x_buffer;
-    // default max block buffer size is 512MB
-    int64_t m_maxBlockQueueSize = 512 * 1024 * 1024;
-    // the memory size occupied by the sync module
-    std::atomic<int64_t> m_blockQueueSize = {0};
-    // the max number of blocks this node can requested to
-    std::atomic<int64_t> m_maxRequestBlocks = {8};
-    // the average size of synced blocks
-    std::atomic<int64_t> m_averageBlockSize = {0};
-    std::atomic<int64_t> m_averageCalCount = {0};
-    // the expand coeff of memory-size after block-decode
-    int64_t const m_blockSizeExpandCoeff = 3;
 
 private:
     bool isNewerBlock(std::shared_ptr<dev::eth::Block> _block);

@@ -22,7 +22,7 @@
 
 #include "DownloadingBlockQueue.h"
 #include "Common.h"
-#include "gperftools/malloc_extension.h"
+#include <libdevcore/easylog.h>
 
 using namespace std;
 using namespace dev;
@@ -44,34 +44,6 @@ void DownloadingBlockQueue::push(RLP const& _rlps)
     m_buffer->emplace_back(blocksShard);
 }
 
-
-void DownloadingBlockQueue::adjustMaxRequestBlocks()
-{
-    if (m_averageBlockSize == 0)
-    {
-        return;
-    }
-    // only request one block per time when the queue is full
-    auto freeQueueSize = m_maxBlockQueueSize - m_blockQueueSize;
-    // calculate the freeRate
-    int64_t maxRequestBlocks = freeQueueSize / (m_averageBlockSize.load() * c_maxRequestShards);
-    if (maxRequestBlocks > c_maxRequestBlocks)
-    {
-        m_maxRequestBlocks = c_maxRequestBlocks;
-        return;
-    }
-    m_maxRequestBlocks = std::max((int64_t)1, maxRequestBlocks);
-
-    SYNC_LOG(DEBUG) << LOG_DESC("DownloadingBlockQueue: adjustMaxRequestBlocks")
-                    << LOG_KV("blockQueueSize", m_blockQueueSize)
-                    << LOG_KV("maxBlockQueueSize", m_maxBlockQueueSize)
-                    << LOG_KV("freeBlockQueueSize", freeQueueSize)
-                    << LOG_KV("averageBlockSize", m_averageBlockSize)
-                    << LOG_KV("adjustedMaxRequestBlocks", m_maxRequestBlocks);
-}
-
-
-// only used for UT
 void DownloadingBlockQueue::push(BlockPtrVec _blocks)
 {
     RLPStream rlpStream;
@@ -117,16 +89,7 @@ void DownloadingBlockQueue::pop()
 {
     WriteGuard l(x_blocks);
     if (!m_blocks.empty())
-    {
-        auto blockSize = m_blocks.top()->blockSize() * m_blockSizeExpandCoeff;
-        m_blockQueueSize -= blockSize;
         m_blocks.pop();
-    }
-    // block queue is empty, reset m_maxRequestBlocks to c_maxRequestBlocks
-    else
-    {
-        m_maxRequestBlocks = c_maxRequestBlocks;
-    }
 }
 
 BlockPtr DownloadingBlockQueue::top(bool isFlushBuffer)
@@ -156,81 +119,66 @@ void DownloadingBlockQueue::clearQueue()
     WriteGuard l(x_blocks);
     std::priority_queue<BlockPtr, BlockPtrVec, BlockQueueCmp> emptyQueue;
     swap(m_blocks, emptyQueue);  // Does memory leak here ?
-    // give back the memory to os
-    MallocExtension::instance()->ReleaseFreeMemory();
 }
 
 void DownloadingBlockQueue::flushBufferToQueue()
 {
-    WriteGuard l(x_buffer);
-    bool ret = true;
-    while (m_buffer->size() > 0 && ret)
+    shared_ptr<ShardPtrVec> localBuffer;
     {
-        auto blocksShard = m_buffer->front();
-        m_buffer->pop_front();
-        ret = flushOneShard(blocksShard);
+        WriteGuard l(x_buffer);
+        localBuffer = m_buffer;                 //
+        m_buffer = make_shared<ShardPtrVec>();  // m_buffer point to a new vector
     }
-}
 
-bool DownloadingBlockQueue::flushOneShard(ShardPtr _blocksShard)
-{
     // pop buffer into queue
     WriteGuard l(x_blocks);
-    if (m_blocks.size() >= c_maxDownloadingBlockQueueSize)  // TODO not to use size to
-                                                            // control insert
+
+    for (ShardPtr blocksShard : *localBuffer)  //对 每一个 区块区间 缓存 操作
     {
-        SYNC_LOG(TRACE) << LOG_BADGE("Download") << LOG_BADGE("BlockSync")
-                        << LOG_DESC("DownloadingBlockQueueBuffer is full")
-                        << LOG_KV("queueSize", m_blocks.size());
-
-        return false;
-    }
-
-    SYNC_LOG(TRACE) << LOG_BADGE("Download") << LOG_BADGE("BlockSync")
-                    << LOG_DESC("Decoding block buffer")
-                    << LOG_KV("blocksShardSize", _blocksShard->blocksBytes.size());
-
-
-    RLP const& rlps = RLP(ref(_blocksShard->blocksBytes));
-    unsigned itemCount = rlps.itemCount();
-    size_t successCnt = 0;
-    for (unsigned i = 0; i < itemCount; ++i)
-    {
-        try
+        if (m_blocks.size() >= c_maxDownloadingBlockQueueSize)  // TODO not to use size to control 下载队列未满
+                                                                // insert
         {
-            shared_ptr<Block> block =
-                make_shared<Block>(rlps[i].toBytes(), CheckTransaction::Everything, false);
-            if (isNewerBlock(block))
+            SYNC_LOG(TRACE) << LOG_BADGE("Download") << LOG_BADGE("BlockSync")
+                            << LOG_DESC("DownloadingBlockQueueBuffer is full")
+                            << LOG_KV("queueSize", m_blocks.size());
+
+            break;
+        }
+
+        SYNC_LOG(TRACE) << LOG_BADGE("Download") << LOG_BADGE("BlockSync")
+                        << LOG_DESC("Decoding block buffer")
+                        << LOG_KV("blocksShardSize", blocksShard->blocksBytes.size());
+
+
+        RLP const& rlps = RLP(ref(blocksShard->blocksBytes));      //将缓存解码
+        unsigned itemCount = rlps.itemCount();
+        size_t successCnt = 0;
+        for (unsigned i = 0; i < itemCount; ++i)//还原为 多个区块
+        {
+            try
             {
-                successCnt++;
-                m_blocks.push(block);
-                // Note: the memory size occupied by Block object will increase to at least treble
-                // for:
-                // 1. txsCache of Block
-                // 2. m_rlpBuffer of every Transaction
-                // 3. the Block occupied memory calculated without cache
-                auto blockSize = block->blockSize() * m_blockSizeExpandCoeff;
-                m_blockQueueSize += blockSize;
-                m_averageBlockSize = (m_averageBlockSize == 0 ?
-                                          blockSize :
-                                          (blockSize + m_averageBlockSize * m_averageCalCount) /
-                                              (m_averageCalCount + 1));
-                m_averageCalCount++;
+                shared_ptr<Block> block =
+                    make_shared<Block>(rlps[i].toBytes(), CheckTransaction::Everything, false); 
+                if (isNewerBlock(block))//判断区块时候是新的
+                {
+                    successCnt++;
+                    m_blocks.push(block);
+                }
+            }
+            catch (std::exception& e)
+            {
+                SYNC_LOG(WARNING) << LOG_BADGE("Download") << LOG_BADGE("BlockSync")
+                                  << LOG_DESC("Invalid block RLP") << LOG_KV("reason", e.what())
+                                  << LOG_KV("RLPDataSize", rlps.data().size());
+                continue;
             }
         }
-        catch (std::exception& e)
-        {
-            SYNC_LOG(WARNING) << LOG_BADGE("Download") << LOG_BADGE("BlockSync")
-                              << LOG_DESC("Invalid block RLP") << LOG_KV("reason", e.what())
-                              << LOG_KV("RLPDataSize", rlps.data().size());
-            continue;
-        }
-    }
 
-    SYNC_LOG(TRACE) << LOG_BADGE("Download") << LOG_BADGE("BlockSync")
-                    << LOG_DESC("Flush buffer to block queue") << LOG_KV("import", successCnt)
-                    << LOG_KV("rcv", itemCount) << LOG_KV("downloadBlockQueue", m_blocks.size());
-    return true;
+        SYNC_LOG(TRACE) << LOG_BADGE("Download") << LOG_BADGE("BlockSync")
+                        << LOG_DESC("Flush buffer to block queue") << LOG_KV("import", successCnt)
+                        << LOG_KV("rcv", itemCount)
+                        << LOG_KV("downloadBlockQueue", m_blocks.size());
+    }
 }
 
 void DownloadingBlockQueue::clearFullQueueIfNotHas(int64_t _blockNumber)
@@ -238,7 +186,7 @@ void DownloadingBlockQueue::clearFullQueueIfNotHas(int64_t _blockNumber)
     bool needClear = false;
     {
         ReadGuard l(x_blocks);
-
+        //下载队列如果满了，并且队头区块高度 大于 m_blockChain->number() + 1，清空
         if (m_blocks.size() == c_maxDownloadingBlockQueueSize &&
             m_blocks.top()->header().number() > _blockNumber)
             needClear = true;

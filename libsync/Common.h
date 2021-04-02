@@ -42,7 +42,6 @@ namespace dev
 namespace sync
 {
 DEV_SIMPLE_EXCEPTION(SyncVerifyHandlerNotSet);
-DEV_SIMPLE_EXCEPTION(InValidSyncPacket);
 // Every downloading request timeout request:
 // c_maxRequestBlocks(each peer) * c_maxRequestShards(peer num) = blocks
 static int64_t const c_maxRequestBlocks = 32;
@@ -54,8 +53,8 @@ static size_t const c_maxDownloadingBlockQueueSize =
     c_maxRequestShards * c_maxRequestBlocks * 2;  // maybe less than 128 is ok
 static size_t const c_maxDownloadingBlockQueueBufferSize = c_maxDownloadingBlockQueueSize;
 
-static size_t const c_maxReceivedDownloadRequestPerPeer = 1000;
-static uint64_t const c_respondDownloadRequestTimeout = (200 * c_maxRequestBlocks);  // ms
+static size_t const c_maxReceivedDownloadRequestPerPeer = 8;
+static uint64_t const c_respondDownloadRequestTimeout = 200;  // ms
 
 static unsigned const c_syncPacketIDBase = 1;
 
@@ -78,8 +77,6 @@ enum SyncPacketType : byte
     TransactionsPacket = 0x01,
     BlocksPacket = 0x02,
     ReqBlocskPacket = 0x03,
-    TxsStatusPacket = 0x04,
-    TxsRequestPacekt = 0x05,
     PacketCount
 };
 
@@ -89,5 +86,14 @@ enum class SyncState
     Downloading,  ///< Downloading blocks
     Size          /// Must be kept last
 };
+
+struct SyncPeerInfo
+{
+    NodeID nodeId;
+    int64_t number;
+    h256 genesisHash;
+    h256 latestHash;
+};
+
 }  // namespace sync
 }  // namespace dev

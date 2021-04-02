@@ -22,7 +22,6 @@
  */
 
 #include "SyncMsgPacket.h"
-#include <libethcore/TxsParallelParser.h>
 #include <libp2p/P2PSession.h>
 #include <libp2p/Service.h>
 
@@ -74,62 +73,17 @@ RLPStream& SyncMsgPacket::prep(RLPStream& _s, unsigned _id, unsigned _args)
     return _s.appendRaw(bytes(1, _id + c_syncPacketIDBase)).appendList(_args);
 }
 
-void SyncStatusPacket::encode()
+void SyncStatusPacket::encode(int64_t _number, h256 const& _genesisHash, h256 const& _latestHash)
 {
     m_rlpStream.clear();
-    // add aligned time into the fields
-    prep(m_rlpStream, StatusPacket, m_itemCount);
-    // Note: here must encode int64_t type value with append(bigint)
-    // Otherwise, when the number is large the result of decode is incorrect
-    m_rlpStream.append(bigint(number));
-    m_rlpStream << genesisHash << latestHash;
+    prep(m_rlpStream, StatusPacket, 3) << _number << _genesisHash << _latestHash;
 }
 
-void SyncStatusPacket::decodePacket(RLP const& _rlp, dev::h512 const& _peer)
-{
-    if (_rlp.itemCount() != m_itemCount)
-    {
-        LOG(WARNING) << LOG_BADGE("SYNC")
-                     << LOG_DESC("SyncStatusPacket: receive invalid status packet format")
-                     << LOG_KV("peer", _peer.abridged());
-        BOOST_THROW_EXCEPTION(
-            InValidSyncPacket() << errinfo_comment("receive invalid SyncStatusPacket format"));
-    }
-    nodeId = _peer;
-    number = _rlp[0].toInt<int64_t>();
-    genesisHash = _rlp[1].toHash<h256>();
-    latestHash = _rlp[2].toHash<h256>();
-}
-
-void SyncStatusPacketWithAlignedTime::encode()
-{
-    SyncStatusPacket::encode();
-    m_rlpStream.append(bigint(alignedTime));
-}
-
-void SyncStatusPacketWithAlignedTime::decodePacket(RLP const& _rlp, dev::h512 const& _peer)
-{
-    SyncStatusPacket::decodePacket(_rlp, _peer);
-    // get alignedTime
-    alignedTime = _rlp[3].toInt<int64_t>();
-}
-
-void SyncTransactionsPacket::encode(
-    std::vector<bytes> const& _txRLPs, bool const& _enableTreeRouter, uint64_t const& _consIndex)
+void SyncTransactionsPacket::encode(std::vector<bytes> const& _txRLPs)
 {
     if (g_BCOSConfig.version() >= RC2_VERSION)
     {
-        unsigned fieldSize = 1;
-        if (_enableTreeRouter)
-        {
-            fieldSize = 2;
-        }
-        encodeRC2(_txRLPs, fieldSize);
-        // append _consIndex
-        if (_enableTreeRouter)
-        {
-            m_rlpStream << _consIndex;
-        }
+        encodeRC2(_txRLPs);
         return;
     }
 
@@ -143,19 +97,11 @@ void SyncTransactionsPacket::encode(
     prep(m_rlpStream, TransactionsPacket, txsSize).appendRaw(txRLPS, txsSize);
 }
 
-void SyncTransactionsPacket::encodeRC2(
-    std::vector<bytes> const& _txRLPs, unsigned const& _fieldSize)
+void SyncTransactionsPacket::encodeRC2(std::vector<bytes> const& _txRLPs)
 {
     m_rlpStream.clear();
     bytes txsBytes = dev::eth::TxsParallelParser::encode(_txRLPs);
-    prep(m_rlpStream, TransactionsPacket, _fieldSize).append(ref(txsBytes));
-}
-
-P2PMessage::Ptr SyncTransactionsPacket::toMessage(PROTOCOL_ID _protocolId, bool const& _fromRPC)
-{
-    auto msg = SyncMsgPacket::toMessage(_protocolId);
-    msg->setPacketType((int)(_fromRPC));
-    return msg;
+    prep(m_rlpStream, TransactionsPacket, 1).append(ref(txsBytes));
 }
 
 void SyncBlocksPacket::encode(std::vector<dev::bytes> const& _blockRLPs)
@@ -178,19 +124,4 @@ void SyncReqBlockPacket::encode(int64_t _from, unsigned _size)
 {
     m_rlpStream.clear();
     prep(m_rlpStream, ReqBlocskPacket, 2) << _from << _size;
-}
-
-void SyncTxsStatusPacket::encode(
-    int64_t const& _number, std::shared_ptr<std::set<dev::h256>> _txsHash)
-{
-    m_rlpStream.clear();
-    auto& retRlp = prep(m_rlpStream, packetType, 2);
-    retRlp << _number;
-    retRlp.append(*_txsHash);
-}
-
-void SyncTxsReqPacket::encode(std::shared_ptr<std::vector<dev::h256>> _requestedTxs)
-{
-    m_rlpStream.clear();
-    prep(m_rlpStream, packetType, 1).append(*_requestedTxs);
 }

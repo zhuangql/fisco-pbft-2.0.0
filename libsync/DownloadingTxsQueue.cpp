@@ -27,142 +27,97 @@ using namespace dev;
 using namespace dev::sync;
 using namespace dev::eth;
 
-void DownloadingTxsQueue::push(
-    SyncMsgPacket::Ptr _packet, dev::p2p::P2PMessage::Ptr _msg, NodeID const& _fromPeer)
+void DownloadingTxsQueue::push(bytesConstRef _txsBytes, NodeID const& _fromPeer)
 {
-    std::shared_ptr<DownloadTxsShard> txsShard =
-        std::make_shared<DownloadTxsShard>(_packet->rlp().data(), _fromPeer);
-    int RPCPacketType = 1;
-    if (_msg->packetType() == RPCPacketType && m_treeRouter)
-    {
-        int64_t consIndex = _packet->rlp()[1].toPositiveInt64();
-        SYNC_LOG(DEBUG) << LOG_DESC("receive and send transactions by tree")
-                        << LOG_KV("consIndex", consIndex)
-                        << LOG_KV("fromPeer", _fromPeer.abridged());
-
-        auto selectedNodeList = m_treeRouter->selectNodes(m_syncStatus->peersSet(), consIndex);
-        // append all the parent nodes into the knownNode
-        auto parentNodeList = m_treeRouter->selectParent(m_syncStatus->peersSet(), consIndex, true);
-        for (auto const& _parentNodeId : *parentNodeList)
-        {
-            txsShard->appendKnownNode(_parentNodeId);
-        }
-        // forward the received txs
-        for (auto const& selectedNode : *selectedNodeList)
-        {
-            if (selectedNode == _fromPeer || !m_service)
-            {
-                continue;
-            }
-            m_service->asyncSendMessageByNodeID(selectedNode, _msg, nullptr);
-            txsShard->appendKnownNode(selectedNode);
-            SYNC_LOG(DEBUG) << LOG_DESC("forward transaction")
-                            << LOG_KV("selectedNode", selectedNode.abridged());
-        }
-    }
     WriteGuard l(x_buffer);
-    m_buffer->emplace_back(txsShard);
+    m_buffer->emplace_back(_txsBytes, _fromPeer);
 }
-
 
 void DownloadingTxsQueue::pop2TxPool(
     std::shared_ptr<dev::txpool::TxPoolInterface> _txPool, dev::eth::CheckTransaction _checkSig)
 {
     auto start_time = utcTime();
     auto record_time = utcTime();
-    int64_t moveBuffer_time_cost = 0;
-    int64_t newBuffer_time_cost = 0;
+    // fetch from buffer
+    std::shared_ptr<std::vector<DownloadTxsShard>> localBuffer = m_buffer;
+    auto moveBuffer_time_cost = utcTime() - record_time;
+    record_time = utcTime();
+    {
+        WriteGuard l(x_buffer);
+        m_buffer = std::make_shared<std::vector<DownloadTxsShard>>();
+    }
+    auto newBuffer_time_cost = utcTime() - record_time;
+    record_time = utcTime();
+
+    if (_txPool->isFull())
+        return;
     auto isBufferFull_time_cost = utcTime() - record_time;
     record_time = utcTime();
-    // fetch from buffer(only one thread can callback this function)
-    std::shared_ptr<std::vector<std::shared_ptr<DownloadTxsShard>>> localBuffer;
-    {
-        Guard ml(m_mutex);
-        UpgradableGuard l(x_buffer);
-        if (m_buffer->size() == 0)
-        {
-            return;
-        }
-        localBuffer = m_buffer;
-        moveBuffer_time_cost = utcTime() - record_time;
-        record_time = utcTime();
-        UpgradeGuard ul(l);
-        m_buffer = std::make_shared<std::vector<std::shared_ptr<DownloadTxsShard>>>();
-        newBuffer_time_cost = utcTime() - record_time;
-    }
-    // the node is not the group member, return without submit the transaction to the txPool
-    if (!m_needImportToTxPool)
-    {
-        SYNC_LOG(DEBUG) << LOG_DESC("stop pop2TxPool for the node is not belong to the group")
-                        << LOG_KV("pendingTxsSize", _txPool->pendingSize())
-                        << LOG_KV("shardSize", m_buffer->size());
-        return;
-    }
-    auto maintainBuffer_start_time = utcTime();
-    int64_t decode_time_cost = 0;
-    int64_t verifySig_time_cost = 0;
-    int64_t import_time_cost = 0;
-    size_t successCnt = 0;
+
     for (size_t i = 0; i < localBuffer->size(); ++i)
     {
-        record_time = utcTime();
+        auto maintainBuffer_start_time = utcTime();
         // decode
-        auto txs = std::make_shared<dev::eth::Transactions>();
-        std::shared_ptr<DownloadTxsShard> txsShard = (*localBuffer)[i];
+        dev::eth::Transactions txs;
+        DownloadTxsShard const& txsShard = (*localBuffer)[i];
         // TODO drop by Txs Shard
+
+        NodeID fromPeer = txsShard.fromPeer;
+        auto constructRLP_time_cost = utcTime() - record_time;
+        record_time = utcTime();
+
         if (g_BCOSConfig.version() >= RC2_VERSION)
         {
-            RLP const& txsBytesRLP = RLP(ref(txsShard->txsBytes))[0];
+            RLP const& txsBytesRLP = RLP(ref(txsShard.txsBytes))[0];
+            // std::cout << "decode sync txs " << toHex(txsShard.txsBytes) << std::endl;
             dev::eth::TxsParallelParser::decode(
                 txs, txsBytesRLP.toBytesConstRef(), _checkSig, true);
         }
         else
         {
-            RLP const& txsBytesRLP = RLP(ref(txsShard->txsBytes));
+            RLP const& txsBytesRLP = RLP(ref(txsShard.txsBytes));
             unsigned txNum = txsBytesRLP.itemCount();
-            txs->resize(txNum);
+            txs.resize(txNum);
             for (unsigned j = 0; j < txNum; j++)
             {
-                (*txs)[j] = std::make_shared<dev::eth::Transaction>();
-                (*txs)[j]->decode(txsBytesRLP[j]);
+                txs[j].decode(txsBytesRLP[j]);
             }
         }
-        decode_time_cost += (utcTime() - record_time);
+
+        auto decode_time_cost = utcTime() - record_time;
         record_time = utcTime();
 
         // parallel verify transaction before import
         tbb::parallel_for(
-            tbb::blocked_range<size_t>(0, txs->size()), [&](const tbb::blocked_range<size_t>& _r) {
+            tbb::blocked_range<size_t>(0, txs.size()), [&](const tbb::blocked_range<size_t>& _r) {
                 for (size_t j = _r.begin(); j != _r.end(); ++j)
                 {
-                    if (!_txPool->txExists((*txs)[j]->sha3()))
-                        (*txs)[j]->sender();
+                    if (!_txPool->txExists(txs[j].sha3()))
+                        txs[j].sender();
                 }
             });
-        verifySig_time_cost += (utcTime() - record_time);
+
+        auto verifySig_time_cost = utcTime() - record_time;
+        record_time = utcTime();
 
         // import into tx pool
-        record_time = utcTime();
-        NodeID fromPeer = txsShard->fromPeer;
-        for (auto tx : *txs)
+        size_t successCnt = 0;
+        std::vector<dev::h256> knownTxHash;
+        for (Transaction& tx : txs)
         {
             try
             {
                 auto importResult = _txPool->import(tx);
                 if (dev::eth::ImportResult::Success == importResult)
-                {
-                    tx->appendNodeContainsTransaction(fromPeer);
-                    tx->appendNodeListContainTransaction(*(txsShard->knownNodes));
                     successCnt++;
-                }
                 else if (dev::eth::ImportResult::AlreadyKnown == importResult)
                 {
                     SYNC_LOG(TRACE)
                         << LOG_BADGE("Tx")
                         << LOG_DESC("Import peer transaction into txPool DUPLICATED from peer")
                         << LOG_KV("reason", int(importResult))
-                        << LOG_KV("peer", fromPeer.abridged())
-                        << LOG_KV("txHash", tx->sha3().abridged());
+                        << LOG_KV("txHash", fromPeer.abridged())
+                        << LOG_KV("peer", std::move(tx.sha3().abridged()));
                 }
                 else
                 {
@@ -170,27 +125,45 @@ void DownloadingTxsQueue::pop2TxPool(
                         << LOG_BADGE("Tx")
                         << LOG_DESC("Import peer transaction into txPool FAILED from peer")
                         << LOG_KV("reason", int(importResult))
-                        << LOG_KV("peer", fromPeer.abridged())
-                        << LOG_KV("txHash", tx->sha3().abridged());
+                        << LOG_KV("txHash", fromPeer.abridged())
+                        << LOG_KV("peer", move(tx.sha3().abridged()));
                 }
+                knownTxHash.push_back(tx.sha3());
             }
             catch (std::exception& e)
             {
                 SYNC_LOG(WARNING) << LOG_BADGE("Tx") << LOG_DESC("Invalid transaction RLP recieved")
-                                  << LOG_KV("reason", e.what()) << LOG_KV("rlp", toHex(tx->rlp()));
+                                  << LOG_KV("reason", e.what()) << LOG_KV("rlp", toHex(tx.rlp()));
                 continue;
             }
         }
-        import_time_cost += (utcTime() - record_time);
+        auto import_time_cost = utcTime() - record_time;
+        record_time = utcTime();
+
+        if (knownTxHash.size() > 0)
+        {
+            _txPool->setTransactionsAreKnownBy(knownTxHash, fromPeer);
+        }
+        auto setTxKnownBy_time_cost = utcTime() - record_time;
+        record_time = utcTime();
+
+        auto pengdingSize = _txPool->pendingSize();
+        auto getPendingSize_time_cost = utcTime() - record_time;
+        record_time = utcTime();
+
+        SYNC_LOG(DEBUG) << LOG_BADGE("Tx") << LOG_DESC("Import peer transactions")
+                        << LOG_KV("import", successCnt) << LOG_KV("rcv", txs.size())
+                        << LOG_KV("txPool", pengdingSize) << LOG_KV("peer", fromPeer.abridged())
+                        << LOG_KV("moveBufferTimeCost", moveBuffer_time_cost)
+                        << LOG_KV("newBufferTimeCost", newBuffer_time_cost)
+                        << LOG_KV("isBufferFullTimeCost", isBufferFull_time_cost)
+                        << LOG_KV("constructRLPTimeCost", constructRLP_time_cost)
+                        << LOG_KV("decodTimeCost", decode_time_cost)
+                        << LOG_KV("verifySigTimeCost", verifySig_time_cost)
+                        << LOG_KV("importTimeCost", import_time_cost)
+                        << LOG_KV("setTxKnownByTimeCost", setTxKnownBy_time_cost)
+                        << LOG_KV("getPendingSizeTimeCost", getPendingSize_time_cost)
+                        << LOG_KV("maintainBufferTimeCost", utcTime() - maintainBuffer_start_time)
+                        << LOG_KV("totalTimeCostFromStart", utcTime() - start_time);
     }
-    SYNC_LOG(TRACE) << LOG_BADGE("Tx") << LOG_DESC("Import peer transactions")
-                    << LOG_KV("import", successCnt)
-                    << LOG_KV("moveBufferTimeCost", moveBuffer_time_cost)
-                    << LOG_KV("newBufferTimeCost", newBuffer_time_cost)
-                    << LOG_KV("isBufferFullTimeCost", isBufferFull_time_cost)
-                    << LOG_KV("decodTimeCost", decode_time_cost)
-                    << LOG_KV("verifySigTimeCost", verifySig_time_cost)
-                    << LOG_KV("importTimeCost", import_time_cost)
-                    << LOG_KV("maintainBufferTimeCost", utcTime() - maintainBuffer_start_time)
-                    << LOG_KV("totalTimeCostFromStart", utcTime() - start_time);
 }
